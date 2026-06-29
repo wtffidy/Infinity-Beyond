@@ -5715,6 +5715,73 @@ namespace BeyondAgent
                             questRunner?.StartChain(name, QuestChains.Get(name));
                         }
                     }
+                    else if (type == "ApplyDropFilter")
+                    {
+                        try
+                        {
+                            // Filter items/rarities with accept/reject action
+                            JArray itemsJson = (JArray)cmd["Items"];
+                            JArray itemIdsJson = (JArray)cmd["ItemIds"];
+                            JArray raritiesJson = (JArray)cmd["Rarities"];
+                            string action = (string)cmd["Action"] ?? "Accept";
+
+                            var itemNames = new System.Collections.Generic.List<string>();
+                            if (itemsJson != null)
+                            {
+                                foreach (var item in itemsJson)
+                                {
+                                    itemNames.Add(item.ToString());
+                                }
+                            }
+
+                            var itemIds = new System.Collections.Generic.List<int>();
+                            if (itemIdsJson != null)
+                            {
+                                foreach (var id in itemIdsJson)
+                                {
+                                    itemIds.Add((int)id);
+                                }
+                            }
+
+                            var rarities = new System.Collections.Generic.List<string>();
+                            if (raritiesJson != null)
+                            {
+                                foreach (var rarity in raritiesJson)
+                                {
+                                    rarities.Add(rarity.ToString().ToLower());
+                                }
+                            }
+
+                            string desc = itemNames.Count > 0
+                                ? $"items: {string.Join(", ", itemNames)}"
+                                : itemIds.Count > 0
+                                    ? $"item IDs: {string.Join(", ", itemIds)}"
+                                    : rarities.Count > 0
+                                        ? $"rarities: {string.Join(", ", rarities)}"
+                                        : "(no filter)";
+
+                            LoggerInstance.Msg($"[Launcher] Drop filter: {action} {desc}");
+
+                            // Apply actual filter
+                            Util.DropFilterEngine.ApplyDropFilter(itemNames, itemIds, rarities, action);
+                        }
+                        catch (System.Exception ex)
+                        {
+                            LoggerInstance.Error($"Drop filter error: {ex.Message}");
+                        }
+                    }
+                    else if (type == "ClearDropFilter")
+                    {
+                        try
+                        {
+                            LoggerInstance.Msg("[Launcher] Drop filter cleared");
+                            Util.DropFilterEngine.ClearFilter();
+                        }
+                        catch (System.Exception ex)
+                        {
+                            LoggerInstance.Error($"Clear drop filter error: {ex.Message}");
+                        }
+                    }
                     else if (type == "RequestStatus")
                     {
                         SendStatusUpdate();
