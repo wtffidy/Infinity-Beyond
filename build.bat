@@ -21,12 +21,34 @@ echo  Building Infinity-Beyond Standalone Launcher and Mod
 echo ========================================================
 echo.
 
+:: =========================
+:: AUTO-DETECT AQW INFINITY
+:: =========================
 set "GAME_DIR=%AQWI_GAME_DIR%"
+
 if not defined GAME_DIR (
-    echo Enter the path to your AdventureQuest Worlds Infinity install folder.
-    echo ^(The folder that contains the game's .exe and its *_Data folder.^)
+    echo Searching all drives for Steam install...
+    echo.
+
+    for %%D in (
+        C D E F G H I J K L M N O P Q R S T U V W X Y Z
+    ) do (
+        if exist "%%D:\Steam\steamapps\common\AdventureQuest Worlds Unity Playtest\" (
+            set "GAME_DIR=%%D:\Steam\steamapps\common\AdventureQuest Worlds Unity Playtest"
+            goto :FoundGame
+        )
+    )
+)
+
+:FoundGame
+
+if not defined GAME_DIR (
+    echo Could not auto-detect AQW Infinity.
+    echo Enter the install folder manually:
     set /p "GAME_DIR=Game directory: "
 )
+
+set "GAME_DIR=%GAME_DIR:"=%"
 set "GAME_DIR=%GAME_DIR:"=%"
 
 if not exist "%GAME_DIR%\" (
