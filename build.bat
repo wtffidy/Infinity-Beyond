@@ -30,9 +30,7 @@ if not defined GAME_DIR (
     echo Searching all drives for Steam install...
     echo.
 
-    for %%D in (
-        C D E F G H I J K L M N O P Q R S T U V W X Y Z
-    ) do (
+   for %%D in (C D I E F G H J K L M N O P Q R S T U V W X Y Z) do (
         if exist "%%D:\Steam\steamapps\common\AdventureQuest Worlds Unity Playtest\" (
             set "GAME_DIR=%%D:\Steam\steamapps\common\AdventureQuest Worlds Unity Playtest"
             goto :FoundGame
